@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Transaction extends Model
 {
     protected $guarded = [];
+    public $incrementing = false;
 
     public function user(): BelongsTo
     {
