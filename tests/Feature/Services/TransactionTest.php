@@ -26,16 +26,6 @@ class TransactionTest extends TestCase
         parent::__construct($name);
     }
 
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-
     public function test_store_positive_transaction()
     {
         # Create a new transaction with positive amount
