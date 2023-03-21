@@ -56,15 +56,17 @@ class TransactionService
      */
     public function update(string $title = null, int $amount = null): int
     {
-        # Get difference between old and new amount
-        $diff =  $amount - $this->transaction->amount;
+        if (!is_null($amount)) {
+            # Get difference between old and new amount
+            $diff = $amount - $this->transaction->amount;
+        }
 
         # Set new amount and update
         $this->transaction->amount = $amount ?? $this->transaction->amount;
         $this->transaction->title = $title ?? $this->transaction->title;
         $this->transaction->save();
 
-        return $diff;
+        return $diff ?? 0;
     }
 
     /**
