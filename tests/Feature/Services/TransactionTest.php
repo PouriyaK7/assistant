@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Services;
 
-use App\Events\CreateTransactionEvent;
+use App\Events\UpdateTransactionEvent;
 use App\Models\User;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,7 +47,7 @@ class TransactionTest extends TestCase
         $this->assertNotEmpty($transaction);
 
         # Trigger create transaction event
-        event(new CreateTransactionEvent($transaction, $this->user));
+        event(new UpdateTransactionEvent($transaction, $this->user));
 
         # Check if user balance increased
         $this->assertTrue($balance < $this->user->balance);
@@ -66,7 +66,7 @@ class TransactionTest extends TestCase
         $this->assertNotEmpty($transaction);
 
         # Trigger create transaction event
-        event(new CreateTransactionEvent($transaction, $this->user));
+        event(new UpdateTransactionEvent($transaction, $this->user));
 
         # Check if user balance decreased
         $this->assertTrue($balance > $this->user->balance);
