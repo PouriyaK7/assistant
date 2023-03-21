@@ -61,4 +61,19 @@ class TransactionService
 
         return $diff;
     }
+
+    /**
+     * Delete transaction from db
+     *
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        # Get current amount to return at last
+        $amount = -$this->transaction->amount;
+        # Delete transaction
+        $this->transaction->delete();
+
+        return $amount;
+    }
 }
