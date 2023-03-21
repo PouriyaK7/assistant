@@ -31,17 +31,18 @@ class TransactionService
      *
      * @param int $amount
      * @param string $userID
-     * @return Transaction
+     * @return string
      */
-    public function create(int $amount, string $userID): Transaction
+    public function create(int $amount, string $userID): string
     {
+        $id = Uuid::uuid4()->toString();
         $this->transaction = Transaction::create([
-            'id' => Uuid::uuid4()->toString(),
+            'id' => $id,
             'user_id' => $userID,
             'amount' => $amount,
         ]);
 
-        return $this->transaction;
+        return $id;
     }
 
     /**
