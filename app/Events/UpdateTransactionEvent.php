@@ -11,15 +11,15 @@ class UpdateTransactionEvent
 {
     use Dispatchable, SerializesModels;
 
-    public Transaction $transaction;
-    public User $user;
+    public int $amount;
+    public string $userID;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Transaction $transaction, User $user)
+    public function __construct(int $amount, string $userID)
     {
-        $this->user = $user;
-        $this->transaction = $transaction;
+        $this->userID = $userID;
+        $this->amount = $amount;
     }
 }
