@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Services;
 
-use App\Events\UpdateTransactionEvent;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TransactionService;
