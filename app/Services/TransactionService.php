@@ -44,11 +44,21 @@ class TransactionService
         return $this->transaction;
     }
 
-    public function update(int $amount): bool
+    /**
+     * Update an existing transaction in db
+     *
+     * @param int $amount
+     * @return int
+     */
+    public function update(int $amount): int
     {
-        # Set new amount
-        $this->transaction->amount = $amount;
+        # Get difference between old and new amount
+        $diff =  $amount - $this->transaction->amount;
 
-        return $this->transaction->save();
+        # Set new amount and update
+        $this->transaction->amount = $amount;
+        $this->transaction->save();
+
+        return $diff;
     }
 }
