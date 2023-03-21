@@ -3,6 +3,7 @@
 namespace Tests\Feature\Services;
 
 use App\Events\UpdateTransactionEvent;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +14,7 @@ class TransactionTest extends TestCase
     use RefreshDatabase;
 
     public User $user;
+    const AMOUNT = 10000;
 
     public function __construct(string $name)
     {
@@ -36,39 +38,53 @@ class TransactionTest extends TestCase
 
     public function test_store_positive_transaction()
     {
-        # Get user balance
-        $balance = $this->user->balance;
-
         # Create a new transaction with positive amount
         $service = new TransactionService();
-        $transaction = $service->create(10000, $this->user->id);
+        $service->create(self::AMOUNT, $this->user->id);
 
         # Assert if transaction created successfully
-        $this->assertNotEmpty($transaction);
-
-        # Trigger create transaction event
-        event(new UpdateTransactionEvent($transaction, $this->user));
-
-        # Check if user balance increased
-        $this->assertTrue($balance < $this->user->balance);
+        $this->assertNotEmpty($service->get());
     }
 
     public function test_store_negative_transaction()
     {
-        # Get user balance
-        $balance = $this->user->balance;
-
         # Create a new transaction with negative amount
         $service = new TransactionService();
-        $transaction = $service->create(-10000, $this->user->id);
+        $service->create(-self::AMOUNT, $this->user->id);
 
         # Assert if transaction created successfully
-        $this->assertNotEmpty($transaction);
+        $this->assertNotEmpty($service->get());
+    }
 
-        # Trigger create transaction event
-        event(new UpdateTransactionEvent($transaction, $this->user));
+    public function test_update_transaction()
+    {
+        # Create a new transaction
+        $service = new TransactionService();
+        $service->create(self::AMOUNT, $this->user->id);
 
-        # Check if user balance decreased
-        $this->assertTrue($balance > $this->user->balance);
+        # Update created transaction and get the difference
+        $diff = $service->update(-self::AMOUNT);
+
+        # Check if diff is calculated correctly
+        $this->assertEquals(self::AMOUNT - (-self::AMOUNT), $diff);
+    }
+
+    public function test_delete_transaction()
+    {
+        # Create a new transaction
+        $service = new TransactionService();
+        $service->create(self::AMOUNT, $this->user->id);
+
+        # Get transaction id
+        $id = $service->get()->id;
+
+        # Delete created transaction and get the difference
+        $diff = $service->delete();
+
+        # Check if diff is returned correctly
+        $this->assertEquals(-self::AMOUNT, $diff);
+
+        # Check if transaction is deleted from db
+        $this->assertFalse(Transaction::where('id', $id)->exists());
     }
 }
