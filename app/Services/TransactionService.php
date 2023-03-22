@@ -28,11 +28,11 @@ class TransactionService
     }
 
     /**
-     * @param int|Transaction $transaction
+     * @param string|Transaction $transaction
      * @return void
      * @throws Exception
      */
-    public function set(int|Transaction $transaction): void
+    public function set(string|Transaction $transaction): void
     {
         # Fetch transaction from db if id was given in func param
         if (!($transaction instanceof Transaction)) {
