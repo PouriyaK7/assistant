@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Transaction;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TransactionService
@@ -24,6 +25,26 @@ class TransactionService
     public function get(): ?Transaction
     {
         return $this->transaction ?? null;
+    }
+
+    /**
+     * @param int|Transaction $transaction
+     * @return void
+     * @throws Exception
+     */
+    public function set(int|Transaction $transaction): void
+    {
+        # Fetch transaction from db if id was given in func param
+        if (!($transaction instanceof Transaction)) {
+            $transaction = Transaction::find($transaction);
+        }
+
+        # Throw an exception if transaction not existed
+        if (empty($transaction)) {
+            throw new Exception('Transaction is empty');
+        }
+
+        $this->transaction = $transaction;
     }
 
     /**
