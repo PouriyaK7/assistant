@@ -57,6 +57,20 @@
                     showConfirmButton: false,
                 })
             });
+            window.addEventListener('show-confirm-dialog', e => {
+                Swal.fire({
+                    title: e.detail.title,
+                    text: e.detail.text,
+                    icon: e.detail.icon,
+                    showCancelButton: true,
+                    confirmButtonText: e.detail.confirmButtonText,
+                    cancelButtonText: e.detail.cancelButtonText,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit(e.detail.onConfirmed, e.detail.data);
+                    }
+                });
+            });
         </script>
     </body>
 </html>
