@@ -32,7 +32,7 @@ class TransactionTest extends TestCase
     public function test_store_positive_transaction()
     {
         # Create a new transaction with positive amount
-        $service = new TransactionService();
+        $service = $this->app->make('transaction.service');
         $service->create('Test title 1', self::AMOUNT, $this->user->id);
 
         # Assert if transaction created successfully
@@ -42,7 +42,7 @@ class TransactionTest extends TestCase
     public function test_store_negative_transaction()
     {
         # Create a new transaction with negative amount
-        $service = new TransactionService();
+        $service = $this->app->make('transaction.service');
         $service->create('Test title 2', -self::AMOUNT, $this->user->id);
 
         # Assert if transaction created successfully
@@ -52,7 +52,7 @@ class TransactionTest extends TestCase
     public function test_update_transaction()
     {
         # Create a new transaction
-        $service = new TransactionService();
+        $service = $this->app->make('transaction.service');
         $service->create('Test title 3', self::AMOUNT, $this->user->id);
 
         # Update created transaction and get the difference
@@ -65,7 +65,7 @@ class TransactionTest extends TestCase
     public function test_delete_transaction()
     {
         # Create a new transaction
-        $service = new TransactionService();
+        $service = $this->app->make('transaction.service');
         $service->create('Test title 4', self::AMOUNT, $this->user->id);
 
         # Get transaction id
@@ -84,7 +84,7 @@ class TransactionTest extends TestCase
     public function test_set_transaction_with_id()
     {
         # Create a new transaction service instance
-        $service = new TransactionService();
+        $service = $this->app->make('transaction.service');
 
         # Check if transaction is empty
         $this->assertEmpty($service->get());
@@ -108,7 +108,7 @@ class TransactionTest extends TestCase
 
     public function test_set_transaction_with_model_instance()
     {
-        $service = new TransactionService();
+        $service = $this->app->make('transaction.service');
 
         $this->assertEmpty($service->get());
 
