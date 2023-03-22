@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class TransactionTest extends TestCase
@@ -78,5 +79,48 @@ class TransactionTest extends TestCase
 
         # Check if transaction is deleted from db
         $this->assertFalse(Transaction::where('id', $id)->exists());
+    }
+
+    public function test_set_transaction_with_id()
+    {
+        # Create a new transaction service instance
+        $service = new TransactionService();
+
+        # Check if transaction is empty
+        $this->assertEmpty($service->get());
+
+        # Create a new transaction with model itself
+        $transaction = Transaction::create([
+            'id' => Str::uuid()->toString(),
+            'title' => 'Test Transaction',
+            'amount' => self::AMOUNT,
+            'user_id' => $this->user->id,
+        ]);
+
+        # Set service transaction with created transaction id
+        $service->set($transaction->id);
+
+        # Check if service transaction is instance of Transaction model
+        $this->assertTrue($service->get() instanceof Transaction);
+        # Check if service transaction is equal with created transaction before
+        $this->assertTrue($service->get()->id == $transaction->id);
+    }
+
+    public function test_set_transaction_with_model_instance()
+    {
+        $service = new TransactionService();
+
+        $this->assertEmpty($service->get());
+
+        $transaction = Transaction::create([
+            'id' => Str::uuid()->toString(),
+            'title' => 'Test Transaction',
+            'amount' => self::AMOUNT,
+            'user_id' => $this->user->id,
+        ]);
+
+        $service->set($transaction);
+
+        $this->assertTrue($service->get() == $transaction);
     }
 }
