@@ -10,6 +10,8 @@ class Transaction extends Model
     protected $guarded = [];
     public $incrementing = false;
 
+    protected $appends = ['formatted_amount'];
+
     /**
      * Get user related to transaction
      *
@@ -25,7 +27,7 @@ class Transaction extends Model
      *
      * @return string
      */
-    public function getAmountAttribute(): string
+    public function getFormattedAmountAttribute(): string
     {
         return number_format($this->attributes['amount']);
     }
