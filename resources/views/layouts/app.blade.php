@@ -43,5 +43,20 @@
         @stack('modals')
 
         @livewireScripts
+
+        <script>
+            window.addEventListener('updated',  e => {
+                Swal.fire({
+                    title: e.detail.title,
+                    icon: e.detail.icon,
+                    iconColor: e.detail.iconColor,
+                    timer: 3000,
+                    toast: true,
+                    position: 'bottom-right',
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                })
+            });
+        </script>
     </body>
 </html>
