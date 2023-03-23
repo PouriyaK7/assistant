@@ -25,7 +25,7 @@ class Store extends Component
 
     # Storing transaction validation rules
     protected array $rules = [
-        'title' => ['string', 'required', 'min:0'],
+        'title' => ['string', 'required', 'min:1'],
         'amount' => ['required', 'integer'],
     ];
 
@@ -44,6 +44,7 @@ class Store extends Component
      */
     public function store(): void
     {
+        $this->validate();
         # Create transaction with given data
         $this->service->create($this->title, $this->amount, auth()->id());
 
