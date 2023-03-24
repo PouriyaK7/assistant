@@ -31,6 +31,21 @@
                 </div>
 
                 <div class="mt-3">
+                    <x-label for="bank_card_id" value="{{ __('Bank Card') }}"/>
+                    <select
+                        name="bank_card_id"
+                        id="bank_card_id"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        wire:model="bank_card_id"
+                    >
+                        <option selected>Choose bank card...</option>
+                        @foreach($bankCards as $card)
+                            <option value="{{ $card->id }}">{{ $card->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mt-3">
                     <x-button>Submit</x-button>
                 </div>
             </form>
