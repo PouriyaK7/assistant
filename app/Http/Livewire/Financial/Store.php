@@ -8,6 +8,7 @@ use App\Services\Livewire\HasAlert;
 use App\Services\Livewire\HasModal;
 use App\Services\TransactionService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Store extends Component
@@ -27,7 +28,7 @@ class Store extends Component
     # Storing transaction validation rules
     protected array $rules = [
         'title' => ['string', 'required', 'min:1'],
-        'amount' => ['required', 'integer'],
+        'amount' => ['required', 'numeric'],
     ];
 
     public function __construct($id = null)
@@ -47,7 +48,7 @@ class Store extends Component
     {
         $this->validate();
         # Create transaction with given data
-        $this->service->create($this->title, $this->amount, auth()->id());
+        $this->service->create($this->title, $this->amount, Auth::id());
 
         # Show error alert on failure
         if (empty($this->service->get())) {
@@ -56,7 +57,7 @@ class Store extends Component
         }
 
         # Increase user balance
-        event(new UpdateTransactionEvent($this->amount, auth()->id()));
+        event(new UpdateTransactionEvent($this->amount, Auth::id()));
 
         # Reload page on success
         $this->showAlert('Created transaction successfully', $this->icons['success']);
