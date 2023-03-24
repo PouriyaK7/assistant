@@ -22,7 +22,7 @@ class Update extends Component
     # Updating transaction validation rules
     protected array $rules = [
         'title' => ['string', 'required', 'min:1'],
-        'amount' => ['required', 'integer'],
+        'amount' => ['required', 'numeric'],
     ];
 
     /**
