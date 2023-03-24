@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\TransactionService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind('transaction.service', function ($app) {
+            $transactionID = $app->request->route('transaction');
+            return new TransactionService($transactionID);
+        });
     }
 
     /**

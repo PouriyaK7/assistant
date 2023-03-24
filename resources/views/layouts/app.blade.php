@@ -10,6 +10,8 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="{{ asset('node_modules/sweetalert2/dist/sweetalert2.min.css') }}">
+        <script src="{{ asset('node_modules/sweetalert2/dist/sweetalert2.min.js') }}"></script>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -41,5 +43,34 @@
         @stack('modals')
 
         @livewireScripts
+
+        <script>
+            window.addEventListener('updated',  e => {
+                Swal.fire({
+                    title: e.detail.title,
+                    icon: e.detail.icon,
+                    iconColor: e.detail.iconColor,
+                    timer: 3000,
+                    toast: true,
+                    position: 'bottom-right',
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                })
+            });
+            window.addEventListener('show-confirm-dialog', e => {
+                Swal.fire({
+                    title: e.detail.title,
+                    text: e.detail.text,
+                    icon: e.detail.icon,
+                    showCancelButton: true,
+                    confirmButtonText: e.detail.confirmButtonText,
+                    cancelButtonText: e.detail.cancelButtonText,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.livewire.emit(e.detail.onConfirmed, e.detail.data);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
