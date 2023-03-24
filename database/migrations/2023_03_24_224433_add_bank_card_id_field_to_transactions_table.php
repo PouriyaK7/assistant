@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->foreignId('bank_card_id')->nullable();
+            $table->foreignUuid('bank_card_id')->nullable();
         });
     }
 
