@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class BankCard extends Model
 {
     protected $guarded = [];
+    public $incrementing = false;
 
     /**
      * Get all transactions of the bank card
