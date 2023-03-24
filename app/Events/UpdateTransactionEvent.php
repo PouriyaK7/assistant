@@ -9,13 +9,13 @@ class UpdateTransactionEvent
 {
     use Dispatchable, SerializesModels;
 
-    public int $amount;
+    public float $amount;
     public string $userID;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int $amount, string $userID)
+    public function __construct(float $amount, string $userID)
     {
         $this->userID = $userID;
         $this->amount = $amount;
