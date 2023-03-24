@@ -40,7 +40,7 @@
                                     <td class="px-6 py-4">
                                         <x-button
                                             class="bg-red-500 hover:bg-red-700 focus:bg-red-700"
-                                            wire:click="delete($item)"
+                                            wire:click="delete({{ $item }})"
                                         >Delete</x-button>
                                     </td>
                                 </tr>
