@@ -26,7 +26,7 @@
 
                 <div class="mt-3">
                     <x-label for="amount" value="{{ __('Amount') }}"/>
-                    <x-input id="amount" class="block mt-1 w-full" type="number" name="amount" :value="old('amount')"
+                    <x-input id="amount" class="block mt-1 w-full" type="text" name="amount" :value="old('amount')"
                              required autofocus autocomplete="amount" wire:model="amount" />
                 </div>
 
