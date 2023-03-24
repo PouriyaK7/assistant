@@ -55,11 +55,11 @@ class TransactionService
      * Store transaction in db
      *
      * @param string $title
-     * @param int $amount
+     * @param float $amount
      * @param string $userID
      * @return string
      */
-    public function create(string $title, int $amount, string $userID): string
+    public function create(string $title, float $amount, string $userID): string
     {
         $id = Uuid::uuid4()->toString();
         $this->transaction = Transaction::create([
@@ -76,14 +76,14 @@ class TransactionService
      * Update an existing transaction in db
      *
      * @param string|null $title
-     * @param int|null $amount
-     * @return int
+     * @param float|null $amount
+     * @return float
      */
-    public function update(string $title = null, int $amount = null): int
+    public function update(string $title = null, float $amount = null): float
     {
         if (!is_null($amount)) {
             # Get difference between old and new amount
-            $diff = $amount - $this->transaction->amount;
+            $diff = round($amount - (float)$this->transaction->amount, 2);
         }
 
         # Set new amount and update
@@ -97,9 +97,9 @@ class TransactionService
     /**
      * Delete transaction from db
      *
-     * @return int|null
+     * @return float
      */
-    public function delete(): ?int
+    public function delete(): float
     {
         # Get current amount to return at last
         $amount = -$this->transaction->amount;
