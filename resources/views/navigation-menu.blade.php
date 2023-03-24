@@ -15,6 +15,9 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('financial') }}" :active="request()->routeIs('financial')">
+                        {{ __('Financial') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -140,6 +143,9 @@
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('financial') }}" :active="request()->routeIs('financial')">
+                {{ __('Financial') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -153,7 +159,7 @@
 
                 <div>
                     <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="font-medium text-sm text-gray-500">{{ number_format(Auth::user()->balance) }}</div>
                 </div>
             </div>
 
