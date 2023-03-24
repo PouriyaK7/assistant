@@ -32,13 +32,14 @@ class BankCardTest extends TestCase
     {
         $service = new BankCardService();
 
-        $service->create(
+        $id = $service->create(
             'title',
             'card_number',
             $this->user->id
         );
 
         $this->assertNotEmpty($service->get());
+        $this->assertNotEmpty($id);
     }
 
     public function test_update_bank_card()
@@ -89,8 +90,8 @@ class BankCardTest extends TestCase
         (new TransactionService())->create(
             $this->faker->title,
             $this->faker->numberBetween(100000, 150000),
-            $id,
             $this->user->id,
+            $id,
         );
 
         $deleted = $service->delete();
