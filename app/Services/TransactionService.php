@@ -8,12 +8,16 @@ use Ramsey\Uuid\Uuid;
 
 class TransactionService
 {
-    private Transaction $transaction;
+    private ?Transaction $transaction;
 
-    public function __construct(string $id = null)
+    public function __construct(string|Transaction $transaction = null)
     {
-        if (!is_null($id)) {
-            $this->transaction = Transaction::find($id);
+        if (!is_null($transaction)) {
+            if (!($transaction instanceof Transaction)) {
+                $this->transaction = Transaction::find($transaction);
+            } else {
+                $this->transaction = $transaction;
+            }
         }
     }
 
@@ -73,35 +77,19 @@ class TransactionService
      *
      * @param string|null $title
      * @param int|null $amount
-     * @param string|null $id
      * @return int
      */
-    public function update(string $title = null, int $amount = null, string $id = null): int
+    public function update(string $title = null, int $amount = null): int
     {
         if (!is_null($amount)) {
             # Get difference between old and new amount
             $diff = $amount - $this->transaction->amount;
         }
 
-        if (is_null($id)) {
-            # Set new amount and update
-            $this->transaction->amount = $amount ?? $this->transaction->amount;
-            $this->transaction->title = $title ?? $this->transaction->title;
-            $this->transaction->save();
-        } else {
-            # Set params for update and skip null ones
-            $params = [];
-            if (!is_null($title)) {
-                $params['title'] = $title;
-            }
-            if (!is_null($amount)) {
-                $params['amount'] = $amount;
-            }
-
-            # Update transaction
-            Transaction::where('id', $id)
-                ->update($params);
-        }
+        # Set new amount and update
+        $this->transaction->amount = $amount ?? $this->transaction->amount;
+        $this->transaction->title = $title ?? $this->transaction->title;
+        $this->transaction->save();
 
         return $diff ?? 0;
     }
@@ -109,17 +97,10 @@ class TransactionService
     /**
      * Delete transaction from db
      *
-     * @param string|null $id
      * @return int|null
      */
-    public function delete(string $id = null): ?int
+    public function delete(): ?int
     {
-        if (!isset($this->transaction) && !empty($id)) {
-            $this->transaction = Transaction::find($id);
-        } elseif (!isset($this->transaction) && empty($id)) {
-            return null;
-        }
-
         # Get current amount to return at last
         $amount = -$this->transaction->amount;
         # Delete transaction
