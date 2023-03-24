@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Financial;
 
+use App\Events\UpdateTransactionEvent;
 use App\Services\Livewire\ConfirmSubmit;
 use App\Services\Livewire\HasAlert;
 use App\Services\Livewire\HasModal;
@@ -32,7 +33,7 @@ class Store extends Component
     public function __construct($id = null)
     {
         # Initialize transaction service
-        $this->service = app()->make('transaction.service');
+        $this->service = new TransactionService();
 
         parent::__construct($id);
     }
@@ -53,6 +54,9 @@ class Store extends Component
             $this->showAlert('Failed to create transaction', $this->icons['error']);
             return;
         }
+
+        # Increase user balance
+        event(new UpdateTransactionEvent($this->amount, auth()->id()));
 
         # Reload page on success
         $this->showAlert('Created transaction successfully', $this->icons['success']);
