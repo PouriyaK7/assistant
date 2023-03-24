@@ -27,6 +27,7 @@ class Index extends Component
         event(new UpdateTransactionEvent($amount, auth()->id()));
 
         $this->showAlert('Transaction deleted successfully', $this->icons['success']);
+        $this->redirect(route('financial'));
     }
 
     public function render(): View
