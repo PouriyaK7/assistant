@@ -3,19 +3,26 @@
 namespace App\Http\Livewire\Financial;
 
 use App\Events\UpdateTransactionEvent;
+use App\Models\BankCard;
 use App\Models\Transaction;
 use App\Services\Livewire\HasAlert;
 use App\Services\Livewire\HasModal;
 use App\Services\TransactionService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class Update extends Component
 {
     use HasModal, HasAlert;
 
+    # Form states
     public string $title;
     public string $amount;
+    public ?string $bank_card_id;
+
+    # View properties
+    public Collection $bankCards;
 
     public Transaction $transaction;
 
@@ -35,6 +42,8 @@ class Update extends Component
         # Set title and amount values
         $this->title = $this->transaction->title;
         $this->amount = $this->transaction->amount;
+        $this->bank_card_id = $this->transaction->bank_card_id;
+        $this->bankCards = BankCard::orderBy('title')->get();
     }
 
     /**
