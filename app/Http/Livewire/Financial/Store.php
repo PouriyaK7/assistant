@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Financial;
 
 use App\Events\UpdateTransactionEvent;
+use App\Models\BankCard;
 use App\Services\Livewire\ConfirmSubmit;
 use App\Services\Livewire\HasAlert;
 use App\Services\Livewire\HasModal;
@@ -73,7 +74,8 @@ class Store extends Component
         }
 
         # Increase user balance
-        event(new UpdateTransactionEvent($this->amount, Auth::id()));
+        $bankCard = BankCard::find($this->bank_card_id);
+        event(new UpdateTransactionEvent($this->amount, Auth::user(), false, $bankCard));
 
         # Reload page on success
         $this->showAlert('Created transaction successfully', $this->icons['success']);
