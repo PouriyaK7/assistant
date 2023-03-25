@@ -11,17 +11,19 @@ class UpdateTransactionEvent
 {
     use Dispatchable, SerializesModels;
 
+    public BankCard|bool|null $oldCard;
+    public ?BankCard $newCard;
     public float $amount;
     public User $user;
-    public ?BankCard $bankCard;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(float $amount, User $user, ?BankCard $bankCard = null)
+    public function __construct(float $amount, User $user, BankCard|bool|null $oldCard = null, ?BankCard $newCard = null)
     {
-        $this->user = $user;
+        $this->oldCard = $oldCard;
+        $this->newCard = $newCard;
         $this->amount = $amount;
-        $this->bankCard = $bankCard;
+        $this->user = $user;
     }
 }
