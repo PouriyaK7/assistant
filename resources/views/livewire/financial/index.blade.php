@@ -17,6 +17,7 @@
                                 <th scope="col" class="px-6 py-3">ID</th>
                                 <th scope="col" class="px-6 py-3">Title</th>
                                 <th scope="col" class="px-6 py-3">Amount</th>
+                                <th scope="col" class="px-6 py-3">Card</th>
                                 <th scope="col" class="px-6 py-3">Date</th>
                                 <th scope="col" class="px-6 py-3">Update</th>
                                 <th scope="col" class="px-6 py-3">Delete</th>
@@ -30,6 +31,7 @@
                                     >{{ $item->id }}</th>
                                     <td class="px-6 py-4">{{ $item->title }}</td>
                                     <td class="px-6 py-4">{{ $item->formatted_amount }}</td>
+                                    <td class="px-6 py-4">{{ $item->bankCard?->title ?? '-' }}</td>
                                     <td class="px-6 py-4">{{ $item->created_at }}</td>
                                     <td class="px-6 py-4">
                                         <livewire:financial.update
