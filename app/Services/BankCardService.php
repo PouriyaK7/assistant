@@ -87,4 +87,19 @@ class BankCardService
 
         return (bool)$this->card->delete();
     }
+
+    /**
+     * Increase bank card balance with the given amount
+     *
+     * @param float $amount
+     * @return float
+     */
+    public function increaseBalance(float $amount): float
+    {
+        # Increase bank card balance
+        $this->card->balance += $amount;
+        $this->card->save();
+
+        return $this->card->balance;
+    }
 }
