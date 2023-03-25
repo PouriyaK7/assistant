@@ -14,9 +14,6 @@ class ChangeUserBalanceListener
         $old = $event->oldCard;
         $new = $event->newCard;
         $user = $event->user;
-        if (empty($old) && empty($new)) {
-            return;
-        }
 
         if ($old !== false) {
             if (empty($old)) {
