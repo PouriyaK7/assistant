@@ -18,6 +18,9 @@
                     <x-nav-link href="{{ route('financial') }}" :active="request()->routeIs('financial')">
                         {{ __('Financial') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('card') }}" :active="request()->routeIs('card')">
+                        {{ __('Bank Card') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -145,6 +148,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('financial') }}" :active="request()->routeIs('financial')">
                 {{ __('Financial') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('card') }}" :active="request()->routeIs('card')">
+                {{ __('Bank Card') }}
             </x-responsive-nav-link>
         </div>
 
