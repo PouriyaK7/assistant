@@ -57,7 +57,7 @@ class Update extends Component
         $service = new TransactionService($this->transaction);
 
         # Update transaction and reload page
-        $amount = $service->update($this->title, $this->amount);
+        $amount = $service->update($this->title, $this->amount, $this->bank_card_id);
         event(new UpdateTransactionEvent($amount, auth()->id()));
         $this->showAlert('Transaction updated successfully', $this->icons['success']);
         $this->redirect(route('financial'));
