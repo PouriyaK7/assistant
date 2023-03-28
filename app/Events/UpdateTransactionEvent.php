@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\BankCard;
-use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -11,19 +9,15 @@ class UpdateTransactionEvent
 {
     use Dispatchable, SerializesModels;
 
-    public BankCard|bool|null $oldCard;
-    public ?BankCard $newCard;
     public float $amount;
-    public User $user;
+    public string $userID;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(float $amount, User $user, BankCard|bool|null $oldCard = null, ?BankCard $newCard = null)
+    public function __construct(float $amount, string $userID)
     {
-        $this->oldCard = $oldCard;
-        $this->newCard = $newCard;
+        $this->userID = $userID;
         $this->amount = $amount;
-        $this->user = $user;
     }
 }

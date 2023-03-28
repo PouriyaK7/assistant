@@ -70,14 +70,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class);
     }
-
-    /**
-     * Return all user bank cards
-     *
-     * @return HasMany
-     */
-    public function bankCards(): HasMany
-    {
-        return $this->hasMany(BankCard::class);
-    }
 }
