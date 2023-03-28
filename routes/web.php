@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\BankCard;
 use App\Http\Livewire\Financial;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +28,5 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
     Route::get('/financial', Financial::class)->name('financial');
+    Route::get('/cards', BankCard::class)->name('card');
 });

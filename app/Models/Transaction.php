@@ -13,13 +13,23 @@ class Transaction extends Model
     protected $appends = ['formatted_amount'];
 
     /**
-     * Get user related to transaction
+     * Get related user to transaction
      *
      * @return BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get related bank card to transaction
+     *
+     * @return BelongsTo
+     */
+    public function bankCard(): BelongsTo
+    {
+        return $this->belongsTo(BankCard::class);
     }
 
     /**

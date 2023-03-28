@@ -57,9 +57,10 @@ class TransactionService
      * @param string $title
      * @param float $amount
      * @param string $userID
+     * @param string|null $bankCardID
      * @return string
      */
-    public function create(string $title, float $amount, string $userID): string
+    public function create(string $title, float $amount, string $userID, string $bankCardID = null): string
     {
         $id = Uuid::uuid4()->toString();
         $this->transaction = Transaction::create([
@@ -67,6 +68,7 @@ class TransactionService
             'user_id' => $userID,
             'amount' => $amount,
             'title' => $title,
+            'bank_card_id' => $bankCardID,
         ]);
 
         return $id;
@@ -77,9 +79,10 @@ class TransactionService
      *
      * @param string|null $title
      * @param float|null $amount
+     * @param string|null $bankCardID
      * @return float
      */
-    public function update(string $title = null, float $amount = null): float
+    public function update(string $title = null, float $amount = null, string $bankCardID = null): float
     {
         if (!is_null($amount)) {
             # Get difference between old and new amount
@@ -89,6 +92,7 @@ class TransactionService
         # Set new amount and update
         $this->transaction->amount = $amount ?? $this->transaction->amount;
         $this->transaction->title = $title ?? $this->transaction->title;
+        $this->transaction->bank_card_id = $bankCardID ?? $this->transaction->bank_card_id;
         $this->transaction->save();
 
         return $diff ?? 0;
