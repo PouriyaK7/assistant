@@ -1,8 +1,8 @@
 <div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight flex">
-            <img src="{{ asset('assets/images/transaction-svgrepo-com.svg') }}" alt="" class="w-6 h-6 mr-3 stroke-gray-400 inline">
-            {{ __('Financial') }}
+            <img src="{{ asset('assets/images/bank-card-svgrepo-com.svg') }}" alt="" class="w-6 h-6 mr-3 stroke-gray-400 inline">
+            {{ __('Bank Cards') }}
             <x-button class="align-self-end ml-auto" onclick="document.getElementById('create-modal').click()">Create</x-button>
         </h2>
     </x-slot>
@@ -16,27 +16,27 @@
                             <tr>
                                 <th scope="col" class="px-6 py-3">ID</th>
                                 <th scope="col" class="px-6 py-3">Title</th>
-                                <th scope="col" class="px-6 py-3">Amount</th>
-                                <th scope="col" class="px-6 py-3">Card</th>
+                                <th scope="col" class="px-6 py-3">Number</th>
+                                <th scope="col" class="px-6 py-3">Balance</th>
                                 <th scope="col" class="px-6 py-3">Date</th>
                                 <th scope="col" class="px-6 py-3">Update</th>
                                 <th scope="col" class="px-6 py-3">Delete</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($transactions as $item)
-                                <tr wire:key="'transaction-' . $item->id" class="bg-white border-b">
+                            @foreach($cards as $item)
+                                <tr wire:key="'cards-' . $item->id" class="bg-white border-b">
                                     <th scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                                     >{{ $item->id }}</th>
                                     <td class="px-6 py-4">{{ $item->title }}</td>
-                                    <td class="px-6 py-4">{{ $item->formatted_amount }}</td>
-                                    <td class="px-6 py-4">{{ $item->bankCard?->title ?? '-' }}</td>
+                                    <td class="px-6 py-4">{{ $item->number }}</td>
+                                    <td class="px-6 py-4">{{ number_format($item->balance, 2) }}</td>
                                     <td class="px-6 py-4">{{ $item->created_at }}</td>
                                     <td class="px-6 py-4">
-                                        <livewire:financial.update
-                                            :wire:key="'transaction-' . $item->id"
-                                            :transaction="$item"
+                                        <livewire:bank-card.update
+                                            :wire:key="'cards-' . $item->id"
+                                            :card="$item"
                                         />
                                     </td>
                                     <td class="px-6 py-4">
@@ -49,6 +49,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        {{ $cards->links() }}
                     </div>
                 </div>
             </div>

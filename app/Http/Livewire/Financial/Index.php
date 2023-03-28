@@ -32,7 +32,7 @@ class Index extends Component
 
     public function render(): View
     {
-        $transactions = Auth::user()->transactions()->paginate(20);
+        $transactions = Auth::user()->transactions()->with('bankCard')->paginate(20);
         return view('livewire.financial.index', compact('transactions'));
     }
 }

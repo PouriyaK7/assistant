@@ -4,6 +4,7 @@ namespace Tests\Feature\Services;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\BankCardService;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -108,10 +109,13 @@ class TransactionTest extends TestCase
 
     public function test_set_transaction_with_model_instance()
     {
+        # Create a new transaction service instance
         $service = $this->app->make('transaction.service');
 
+        # Check if transaction of service is empty
         $this->assertEmpty($service->get());
 
+        # Create new transaction without transaction service
         $transaction = Transaction::create([
             'id' => Str::uuid()->toString(),
             'title' => 'Test Transaction',
@@ -119,8 +123,75 @@ class TransactionTest extends TestCase
             'user_id' => $this->user->id,
         ]);
 
+        # Set transaction with transaction model instance
         $service->set($transaction);
 
+        # Check if service transaction is the same with we created
         $this->assertTrue($service->get() == $transaction);
+    }
+
+    public function test_create_transaction_with_bank_card()
+    {
+        # Create a new transaction service instance
+        $service = $this->app->make('transaction.service');
+
+        # Create new bank card
+        $id = (new BankCardService())->create(
+            $this->faker->title,
+            $this->faker->creditCardNumber,
+            $this->user->id,
+        );
+
+        # Create transaction with bank card
+        $service->create(
+            $this->faker->title,
+            self::AMOUNT,
+            $this->user->id,
+            $id,
+        );
+
+        # Check if transaction created successfully
+        $this->assertNotEmpty($service->get());
+    }
+
+    public function test_update_with_bank_card()
+    {
+        # Create a new transaction service instance
+        $service = $this->app->make('transaction.service');
+
+        # Create new bank card
+        $oldID = (new BankCardService())->create(
+            $this->faker->title,
+            $this->faker->creditCardNumber,
+            $this->user->id,
+        );
+
+        # Create new transaction
+        $service->create(
+            $this->faker->title,
+            self::AMOUNT,
+            $this->user->id,
+            $oldID,
+        );
+
+        # Keep old transaction
+        $oldTransaction = $service->get();
+
+        # Create a new bank card
+        $newID = (new BankCardService())->create(
+            $this->faker->title,
+            $this->faker->creditCardNumber,
+            $this->user->id,
+        );
+
+        # Assign new bank card to transaction
+        $service->update(
+            bankCardID: $newID,
+        );
+
+        # Check if transaction updated successfully
+        $this->assertNotEquals($newID, $oldTransaction);
+        $this->assertEquals($oldTransaction->amount, $service->get()->amount);
+        $this->assertEquals($oldTransaction->title, $service->get()->title);
     }
 }

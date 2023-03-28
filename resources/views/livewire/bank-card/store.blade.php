@@ -1,7 +1,7 @@
 <div>
     <x-button wire:click="showModal()" id="create-modal" class="hidden" />
     <x-dialog-modal wire:model="modalStatus">
-        <x-slot name="title">Add transaction</x-slot>
+        <x-slot name="title">Add Bank Card</x-slot>
         <x-slot name="content">
             <x-slot name="logo">
                 <x-authentication-card-logo/>
@@ -25,24 +25,9 @@
                 </div>
 
                 <div class="mt-3">
-                    <x-label for="amount" value="{{ __('Amount') }}"/>
-                    <x-input id="amount" class="block mt-1 w-full" type="text" name="amount" :value="old('amount')"
-                             required autofocus autocomplete="amount" wire:model="amount" />
-                </div>
-
-                <div class="mt-3">
-                    <x-label for="bank_card_id" value="{{ __('Bank Card') }}"/>
-                    <select
-                        name="bank_card_id"
-                        id="bank_card_id"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        wire:model="bank_card_id"
-                    >
-                        <option selected>Choose bank card...</option>
-                        @foreach($bankCards as $card)
-                            <option value="{{ $card->id }}">{{ $card->title }}</option>
-                        @endforeach
-                    </select>
+                    <x-label for="number" value="{{ __('Number') }}"/>
+                    <x-input id="number" class="block mt-1 w-full" type="text" name="number" :value="old('number')"
+                             required autofocus autocomplete="number" wire:model="number" />
                 </div>
 
                 <div class="mt-3">
