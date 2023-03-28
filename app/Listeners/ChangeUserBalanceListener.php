@@ -2,33 +2,25 @@
 
 namespace App\Listeners;
 
-use App\Events\UpdateTransactionEvent;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class ChangeUserBalanceListener
 {
     /**
      * Change user balance with the amount given
      */
-    public function handle(UpdateTransactionEvent $event): void
+    public function handle(object $event): void
     {
-        $old = $event->oldCard;
-        $new = $event->newCard;
-        $user = $event->user;
-
-        if ($old !== false) {
-            if (empty($old)) {
-                $old = $user;
-            }
-            $old->update([
-                'balance' => (float)($old->balance - $event->amount),
-            ]);
+        # Fetch user from db and exit if not exists
+        $user = User::find($event->userID);
+        if (empty($user)) {
+            Log::error('User not found for changing it balance');
+            return;
         }
-
-        if (empty($new)) {
-            $new = $user;
-        }
-        $new->update([
-            'balance' => (float)($new->balance + $event->amount),
+        # Increase/Decrease user balance with the amount given and save to db
+        $user->update([
+            'balance' => (float)($user->balance + $event->amount)
         ]);
     }
 }

@@ -23,10 +23,8 @@ class Index extends Component
     public function delete(Transaction $transaction): void
     {
         $service = new TransactionService($transaction);
-        $card = $service->get()->bankCard;
-
         $amount = $service->delete();
-        event(new UpdateTransactionEvent($amount, auth()->user(), false, $card));
+        event(new UpdateTransactionEvent($amount, auth()->id()));
 
         $this->showAlert('Transaction deleted successfully', $this->icons['success']);
         $this->redirect(route('financial'));
@@ -34,10 +32,7 @@ class Index extends Component
 
     public function render(): View
     {
-        $transactions = Auth::user()->transactions()
-            ->with('bankCard')
-            ->latest()
-            ->paginate(20);
+        $transactions = Auth::user()->transactions()->paginate(20);
         return view('livewire.financial.index', compact('transactions'));
     }
 }
