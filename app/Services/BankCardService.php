@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BankCard;
+use App\Models\User;
 use App\Repositories\BankCardRepository;
 use Ramsey\Uuid\Uuid;
 
@@ -64,5 +65,22 @@ class BankCardService
     public static function get(string $id): ?BankCard
     {
         return (new BankCardRepository())->get($id);
+    }
+
+    /**
+     * Transfer an amount between two bank cards
+     *
+     * @param float $amount
+     * @param BankCard|User $originCard
+     * @param BankCard|User $destCard
+     * @return void
+     */
+    public static function transfer(float $amount, BankCard|User $originCard, BankCard|User $destCard): void
+    {
+        $originCard->balance -= $amount;
+        $originCard->save();
+
+        $destCard->balance += $amount;
+        $destCard->save();
     }
 }
