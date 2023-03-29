@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Financial;
 
-use App\Events\UpdateTransactionBankCardEvent;
 use App\Events\UpdateTransactionEvent;
 use App\Models\BankCard;
 use App\Models\Transaction;
@@ -57,7 +56,22 @@ class Update extends Component
     public function update(): void
     {
         $this->validate();
-        $oldCard = $this->transaction->bankCard;
+        # Get origin card from transaction
+        $originCard = $this->transaction->bankCard;
+        # Get destination card from user input
+        $destCard = null;
+        if (!empty($this->bank_card_id)) {
+            $destCard = BankCardService::get($this->bank_card_id);
+        }
+
+        # Transfer money between two wallets if transaction wallet is changed before updating the diff in transaction
+        if ($this->bank_card_id != ($originCard?->id ?? null)) {
+            BankCardService::transfer(
+                $this->transaction->amount,
+                $originCard ?? Auth::user(),
+                $destCard ?? Auth::user(),
+            );
+        }
 
         # Update transaction and reload page
         $amount = TransactionService::update(
@@ -67,8 +81,7 @@ class Update extends Component
             $this->bank_card_id
         );
 
-        $bankCard = BankCardService::get($this->bank_card_id);
-        event(new UpdateTransactionEvent($amount, Auth::user(), $oldCard, $bankCard));
+        event(new UpdateTransactionEvent($amount, Auth::user(), false, $destCard));
 
         $this->showAlert('Transaction updated successfully', $this->icons['success']);
         $this->redirect(route('financial'));
