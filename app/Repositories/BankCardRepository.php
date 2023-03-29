@@ -6,7 +6,6 @@ use App\Models\BankCard;
 use App\Models\Transaction;
 use App\Repositories\Contracts\Repository;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class BankCardRepository implements Repository
 {
