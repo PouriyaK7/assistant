@@ -32,9 +32,8 @@ class Store extends Component
         $this->validate();
 
         # Store new bank card in db and return error on failure
-        $service = new BankCardService();
-        $id = $service->create($this->title, $this->number, Auth::id());
-        if (empty($id)) {
+        $card = BankCardService::create($this->title, $this->number, Auth::id());
+        if (empty($card)) {
             $this->showAlert('Could not create bank card please try again', $this->icons['error']);
             return;
         }

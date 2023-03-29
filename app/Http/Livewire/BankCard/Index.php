@@ -6,7 +6,6 @@ use App\Models\BankCard;
 use App\Services\BankCardService;
 use App\Services\Livewire\HasAlert;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class Index extends Component
@@ -16,14 +15,13 @@ class Index extends Component
     /**
      * Delete card from db
      *
-     * @param BankCard $card
+     * @param string $cardID
      * @return void
      */
-    public function delete(BankCard $card): void
+    public function delete(string $cardID): void
     {
         # Delete bank card and return error if
-        $service = new BankCardService($card);
-        $deleted = $service->delete();
+        $deleted = BankCardService::delete($cardID);
         if (!$deleted) {
             $this->showAlert('You cannot delete bank card that has transactions', $this->icons['error']);
             return;
