@@ -3,54 +3,11 @@
 namespace App\Services;
 
 use App\Models\Transaction;
-use Exception;
+use App\Repositories\TransactionRepository;
 use Ramsey\Uuid\Uuid;
 
 class TransactionService
 {
-    private ?Transaction $transaction;
-
-    public function __construct(string|Transaction $transaction = null)
-    {
-        if (!is_null($transaction)) {
-            if (!($transaction instanceof Transaction)) {
-                $this->transaction = Transaction::find($transaction);
-            } else {
-                $this->transaction = $transaction;
-            }
-        }
-    }
-
-    /**
-     * Get transaction instance
-     *
-     * @return Transaction|null
-     */
-    public function get(): ?Transaction
-    {
-        return $this->transaction ?? null;
-    }
-
-    /**
-     * @param string|Transaction $transaction
-     * @return void
-     * @throws Exception
-     */
-    public function set(string|Transaction $transaction): void
-    {
-        # Fetch transaction from db if id was given in func param
-        if (!($transaction instanceof Transaction)) {
-            $transaction = Transaction::find($transaction);
-        }
-
-        # Throw an exception if transaction not existed
-        if (empty($transaction)) {
-            throw new Exception('Transaction is empty');
-        }
-
-        $this->transaction = $transaction;
-    }
-
     /**
      * Store transaction in db
      *
@@ -58,42 +15,44 @@ class TransactionService
      * @param float $amount
      * @param string $userID
      * @param string|null $bankCardID
-     * @return string
+     * @return null|Transaction
      */
-    public function create(string $title, float $amount, string $userID, string $bankCardID = null): string
+    public static function create(string $title, float $amount, string $userID, string $bankCardID = null): ?Transaction
     {
-        $id = Uuid::uuid4()->toString();
-        $this->transaction = Transaction::create([
-            'id' => $id,
+        return (new TransactionRepository())->store([
+            'id' => Uuid::uuid4()->toString(),
             'user_id' => $userID,
             'amount' => $amount,
             'title' => $title,
             'bank_card_id' => $bankCardID,
         ]);
-
-        return $id;
     }
 
     /**
      * Update an existing transaction in db
      *
+     * @param string $id
      * @param string|null $title
      * @param float|null $amount
      * @param string|null $bankCardID
      * @return float
      */
-    public function update(string $title = null, float $amount = null, string $bankCardID = null): float
+    public static function update(string $id, string $title = null, float $amount = null, string $bankCardID = null): float
     {
+        $repo = new TransactionRepository();
+        $transaction = $repo->get($id);
+
         if (!is_null($amount)) {
             # Get difference between old and new amount
-            $diff = round($amount - (float)$this->transaction->amount, 2);
+            $diff = round($amount - (float)$transaction->amount, 2);
         }
 
-        # Set new amount and update
-        $this->transaction->amount = $amount ?? $this->transaction->amount;
-        $this->transaction->title = $title ?? $this->transaction->title;
-        $this->transaction->bank_card_id = $bankCardID ?? $this->transaction->bank_card_id;
-        $this->transaction->save();
+        # Update transaction
+        $repo->update($id, [
+            'amount' => $amount ?? $transaction->amount,
+            'title' => $title ?? $transaction->title,
+            'bank_card_id' => $bankCardID ?? $transaction->bank_card_id,
+        ]);
 
         return $diff ?? 0;
     }
@@ -101,15 +60,24 @@ class TransactionService
     /**
      * Delete transaction from db
      *
+     * @param string $id
      * @return float
      */
-    public function delete(): float
+    public static function delete(string $id): float
     {
+        $repo = new TransactionRepository();
+        $transaction = $repo->get($id);
+
         # Get current amount to return at last
-        $amount = -$this->transaction->amount;
+        $amount = -$transaction->amount;
         # Delete transaction
-        $this->transaction->delete();
+        $repo->delete($id);
 
         return $amount;
+    }
+
+    public static function get(string $id): ?Transaction
+    {
+        return (new TransactionRepository())->get($id);
     }
 }

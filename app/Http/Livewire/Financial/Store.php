@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Financial;
 
 use App\Events\UpdateTransactionEvent;
-use App\Models\BankCard;
 use App\Services\Livewire\ConfirmSubmit;
 use App\Services\Livewire\HasAlert;
 use App\Services\Livewire\HasModal;
@@ -25,9 +24,6 @@ class Store extends Component
     # View properties
     public Collection $bankCards;
 
-    # Transaction service instance
-    protected TransactionService $service;
-
     # Listeners for ConfirmSubmit trait
     protected $listeners = ['store' => 'store'];
 
@@ -37,14 +33,6 @@ class Store extends Component
         'amount' => ['required', 'numeric'],
         'bank_card_id' => ['nullable', 'string', 'exists:bank_cards,id'],
     ];
-
-    public function __construct($id = null)
-    {
-        # Initialize transaction service
-        $this->service = new TransactionService();
-
-        parent::__construct($id);
-    }
 
     /**
      * Initialize component properties on component mount
@@ -65,16 +53,21 @@ class Store extends Component
     {
         $this->validate();
         # Create transaction with given data
-        $this->service->create($this->title, $this->amount, Auth::id(), $this->bank_card_id);
+        $transaction = TransactionService::create(
+            $this->title,
+            $this->amount,
+            Auth::id(),
+            $this->bank_card_id
+        );
 
         # Show error alert on failure
-        if (empty($this->service->get())) {
+        if (empty($transaction)) {
             $this->showAlert('Failed to create transaction', $this->icons['error']);
             return;
         }
 
         # Increase user balance
-        $bankCard = BankCard::find($this->bank_card_id);
+        $bankCard = $transaction->bankCard;
         event(new UpdateTransactionEvent($this->amount, Auth::user(), false, $bankCard));
 
         # Reload page on success

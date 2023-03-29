@@ -3,70 +3,42 @@
 namespace App\Services;
 
 use App\Models\BankCard;
+use App\Models\User;
+use App\Repositories\BankCardRepository;
 use Ramsey\Uuid\Uuid;
 
 class BankCardService
 {
-    private ?BankCard $card;
-
-    public function __construct(string|BankCard $card = null)
-    {
-        if ($card instanceof BankCard) {
-            $this->card = $card;
-        } elseif (is_string($card)) {
-            $this->card = BankCard::find($card);
-        }
-    }
-
-    /**
-     * Get bank card from service
-     *
-     * @return BankCard|null
-     */
-    public function get(): ?BankCard
-    {
-        return $this->card;
-    }
-
     /**
      * Store new bank card in db
      *
      * @param string $title
      * @param string $number
      * @param int $userID
-     * @return null|string
+     * @return null|BankCard
      */
-    public function create(string $title, string $number, int $userID): ?string
+    public static function create(string $title, string $number, int $userID): ?BankCard
     {
-        $id = Uuid::uuid4()->toString();
         # Store bank card in db and return false on failure
-        $card = BankCard::create([
-            'id' => $id,
+        return (new BankCardRepository())->store([
+            'id' => Uuid::uuid4()->toString(),
             'title' => $title,
             'number' => $number,
             'user_id' => $userID,
         ]);
-        if (empty($card)) {
-            $this->card = null;
-            return '';
-        }
-
-        # Initialize card property
-        $this->card = $card;
-
-        return $id;
     }
 
     /**
      * Update existing bank card in db
      *
+     * @param string $id
      * @param string $title
      * @param string $number
      * @return bool
      */
-    public function update(string $title, string $number): bool
+    public static function update(string $id, string $title, string $number): bool
     {
-        return (bool)$this->card->update([
+        return (new BankCardRepository())->update($id, [
             'title' => $title,
             'number' => $number,
         ]);
@@ -75,31 +47,40 @@ class BankCardService
     /**
      * Delete bank card from db if it has no transactions
      *
+     * @param string $id
      * @return bool
      */
-    public function delete(): bool
+    public static function delete(string $id): bool
     {
+        $repo = new BankCardRepository();
+
         # Check if bank card has no transactions
-        $haveTransactions = $this->card->transactions()->exists();
-        if ($haveTransactions) {
+        if ($repo->hasTransaction($id)) {
             return false;
         }
 
-        return (bool)$this->card->delete();
+        return $repo->delete($id);
+    }
+
+    public static function get(string $id): ?BankCard
+    {
+        return (new BankCardRepository())->get($id);
     }
 
     /**
-     * Increase bank card balance with the given amount
+     * Transfer an amount between two bank cards
      *
      * @param float $amount
-     * @return float
+     * @param BankCard|User $originCard
+     * @param BankCard|User $destCard
+     * @return void
      */
-    public function increaseBalance(float $amount): float
+    public static function transfer(float $amount, BankCard|User $originCard, BankCard|User $destCard): void
     {
-        # Increase bank card balance
-        $this->card->balance += $amount;
-        $this->card->save();
+        $originCard->balance -= $amount;
+        $originCard->save();
 
-        return $this->card->balance;
+        $destCard->balance += $amount;
+        $destCard->save();
     }
 }

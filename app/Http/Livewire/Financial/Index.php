@@ -17,15 +17,14 @@ class Index extends Component
     /**
      * Delete transaction from db and increase the amount from user balance
      *
-     * @param Transaction $transaction
+     * @param string $transactionID
      * @return void
      */
-    public function delete(Transaction $transaction): void
+    public function delete(string $transactionID): void
     {
-        $service = new TransactionService($transaction);
-        $card = $service->get()->bankCard;
+        $card = TransactionService::get($transactionID)->bankCard;
 
-        $amount = $service->delete();
+        $amount = TransactionService::delete($transactionID);
         event(new UpdateTransactionEvent($amount, auth()->user(), false, $card));
 
         $this->showAlert('Transaction deleted successfully', $this->icons['success']);

@@ -4,6 +4,7 @@ namespace Tests\Feature\Services;
 
 use App\Models\BankCard;
 use App\Models\User;
+use App\Repositories\BankCardRepository;
 use App\Services\BankCardService;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -30,47 +31,43 @@ class BankCardTest extends TestCase
 
     public function test_store_bank_card()
     {
-        $service = new BankCardService();
-
-        $id = $service->create(
+        $card = BankCardService::create(
             'title',
             'card_number',
             $this->user->id
         );
 
-        $this->assertNotEmpty($service->get());
-        $this->assertNotEmpty($id);
+        $this->assertNotEmpty($card);
     }
 
     public function test_update_bank_card()
     {
-        $service = new BankCardService();
-
-        $service->create(
+        $card = BankCardService::create(
             $this->faker->title,
             $this->faker->creditCardNumber,
             $this->user->id,
         );
 
-        $updated = $service->update('new title', '1234567890');
+        $updated = BankCardService::update($card->id, 'new title', '1234567890');
 
-        $this->assertEquals('new title', $service->get()->title);
-        $this->assertEquals('1234567890', $service->get()->number);
+        $card = (new BankCardRepository())->get($card->id);
+
+        $this->assertEquals('new title', $card->title);
+        $this->assertEquals('1234567890', $card->number);
         $this->assertTrue($updated);
     }
 
     public function test_delete_without_transactions()
     {
-        $service = new BankCardService();
-        $service->create(
+        $card = BankCardService::create(
             $this->faker->title,
             $this->faker->creditCardNumber,
             $this->user->id
         );
 
-        $id = $service->get()->id;
+        $id = $card->id;
 
-        $deleted = $service->delete();
+        $deleted = BankCardService::delete($id);
 
         $this->assertFalse(BankCard::where('id', $id)->exists());
         $this->assertTrue($deleted);
@@ -78,23 +75,22 @@ class BankCardTest extends TestCase
 
     public function test_delete_with_transactions()
     {
-        $service = new BankCardService();
-        $service->create(
+        $card = BankCardService::create(
             $this->faker->title,
             $this->faker->creditCardNumber,
             $this->user->id
         );
 
-        $id = $service->get()->id;
+        $id = $card->id;
 
-        (new TransactionService())->create(
+        TransactionService::create(
             $this->faker->title,
             $this->faker->numberBetween(100000, 150000),
             $this->user->id,
             $id,
         );
 
-        $deleted = $service->delete();
+        $deleted = BankCardService::delete($id);
 
         $this->assertFalse($deleted);
         $this->assertTrue(BankCard::where('id', $id)->exists());

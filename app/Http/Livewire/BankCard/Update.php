@@ -43,8 +43,7 @@ class Update extends Component
     {
         $this->validate();
 
-        $service = new BankCardService($this->card);
-        $updated = $service->update($this->title, $this->number);
+        $updated = BankCardService::update($this->card->id, $this->title, $this->number);
         if (!$updated) {
             $this->showAlert('Could not edit card please try again', $this->icons['error']);
             return;
